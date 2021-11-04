@@ -1,0 +1,8 @@
+const serviceFunc = () =>{
+
+}
+
+
+export {
+    serviceFunc
+}
