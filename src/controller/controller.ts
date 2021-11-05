@@ -1,7 +1,7 @@
 import { serviceFunc } from "../service/service"
 
 const controllerFunc = () =>{
-    serviceFunc
+    serviceFunc()
 }
 
 
