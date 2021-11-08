@@ -1,4 +1,4 @@
-import {Request, Response, NextFunction, ErrorRequestHandler} from 'express';
+import {ErrorRequestHandler} from 'express';
 import httpStatus from 'http-status';
 import ApiError from './ApiError';
 
@@ -6,24 +6,35 @@ import ApiError from './ApiError';
 const errorConverter: ErrorRequestHandler = (err, req, res, next) => {
     let errorInstance = err;
     if(!(err instanceof ApiError)){
-        const messsage = err.message || httpStatus.INTERNAL_SERVER_ERROR;
+		const statusCode = httpStatus.INTERNAL_SERVER_ERROR;
+        const message = err.message || httpStatus[statusCode];
 
-        errorInstance = new ApiError(httpStatus.INTERNAL_SERVER_ERROR, messsage);
-    }
+        errorInstance = new ApiError(statusCode, message, false);
+    };
 
     next(errorInstance);
-}
+};
 
 const errorHandler: ErrorRequestHandler = (err: ApiError, req, res, next) => {
+	let {statusCode, message} = err;
 
+	if(process.env.NODE_ENV === "production" && !err.isOperational){
+		statusCode = httpStatus.INTERNAL_SERVER_ERROR;
+        message = httpStatus[statusCode] as string;
+	};
     
+	const response = {
+		code: statusCode,
+		message
+	};
 
+
+	res.status(statusCode)
+	   .send(response);
+};
+
+
+export {
+	errorConverter,
+	errorHandler
 }
-
-
-if (!(error instanceof ApiError)) {
-    const statusCode =
-      error.statusCode || error instanceof mongoose.Error ? httpStatus.BAD_REQUEST : httpStatus.INTERNAL_SERVER_ERROR;
-    const message = error.message || httpStatus[statusCode];
-    error = new ApiError(statusCode, message, false, err.stack);
-  }

@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
 import ApiError from './error/ApiError';
+import { errorConverter, errorHandler } from './error/errorHandler';
 import router from './router/Routes';
 
 dotenv.config({
@@ -11,20 +12,21 @@ dotenv.config({
 const app = express();
 
 app.use(express.json());
-app.use("/api", router)
 
-// ssl server
-// const options = {
-//     ca: fs.readFileSync('ssl-fullchain.pem'),
-//     key: fs.readFileSync(path.resolve(process.cwd(), 'ssl-privkey.pem'), 'utf8').toString(),
-//     cert: fs.readFileSync(path.resolve(process.cwd(), 'ssl-cert.pem'), 'utf8').toString(),
-// };
-  
-// https.createServer(options, app).listen(443,()=>{
-//     console.log("start");
-// });
-  
+app.use("/api", router)  
+
+// ApiError가 아닐시 변환
+app.use(errorConverter);
+
+// 에러 핸들링
+app.use(errorHandler);
+
 
 app.listen(process.env.SERVER_PORT,()=>{
-    console.log('start')
+    console.log(`server listening on ${process.env.SERVER_PORT}`)
 })
+
+
+// 에러 핸들링
+// catchAsync
+// ApiError

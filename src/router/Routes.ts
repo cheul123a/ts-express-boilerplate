@@ -1,10 +1,13 @@
 import express from 'express';
 import { controllerFunc } from '../controller/controller';
+import { validateRoot } from '../validators/validator';
 
 const router =  express.Router();
 
 
-router.get("/", controllerFunc);
+router
+    .route("/")
+    .get(controllerFunc);
 
 
 
