@@ -1,5 +1,6 @@
 import express from 'express';
 import { controllerFunc } from '../controller/controller';
+import validate from '../middlewares/validate';
 import { validateRoot } from '../validators/validator';
 
 const router =  express.Router();
@@ -7,7 +8,7 @@ const router =  express.Router();
 
 router
     .route("/")
-    .get(controllerFunc);
+    .get(validate(validateRoot), controllerFunc);
 
 
 
